@@ -25,7 +25,7 @@ namespace DemoApiMongo.Filter
         {
             var result = new ObjectResult(new
             {
-                context.Exception.Message, // Or a different generic message
+                context.Exception.Message,
                 context.Exception.Source,
                 ExceptionType = context.Exception.GetType().FullName,
             })

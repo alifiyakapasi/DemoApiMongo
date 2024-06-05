@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DemoApiMongo.Entities
+namespace DemoApiMongo.Entities.ViewModels
 {
-    public class User
+    public class RegistrationRequestDto
     {
-        public string Id { get; set; }
 
         public string Name { get; set; }
 

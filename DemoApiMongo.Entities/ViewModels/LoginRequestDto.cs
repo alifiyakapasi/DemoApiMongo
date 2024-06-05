@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DemoApiMongo.Entities
+namespace DemoApiMongo.Entities.ViewModels
 {
     public class LoginRequestDto
     {

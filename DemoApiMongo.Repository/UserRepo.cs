@@ -1,5 +1,6 @@
 ﻿using DemoApiMongo.Configuration;
-using DemoApiMongo.Entities;
+using DemoApiMongo.Entities.DataModels;
+using DemoApiMongo.Entities.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

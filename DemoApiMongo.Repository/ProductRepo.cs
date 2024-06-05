@@ -1,25 +1,32 @@
-﻿using DemoApiMongo.Entities;
-using DemoApiMongo.Configuration;
+﻿using DemoApiMongo.Configuration;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Text.RegularExpressions;
 using MongoDB.Bson;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using DemoApiMongo.Entities.DataModels;
+using AutoMapper;
+using DemoApiMongo.Entities.ViewModels;
+using Boxed.Mapping;
 
 namespace DemoApiMongo.Repository
 {
     public class ProductRepo : IProductRepo
     {
        private readonly IMongoCollection<ProductDetails> _productCollection;
+        private readonly IMapper _mapper;
+        private readonly IMapper<ProductDetailModel, ProductDetails> _BoxedMapper;
 
         public ProductRepo(
-         IOptions<ProductDBSettings> productDatabaseSetting)
+         IOptions<ProductDBSettings> productDatabaseSetting, IMapper mapper, IMapper<ProductDetailModel, ProductDetails> BoxedMapper)
         {
             var mongoClient = new MongoClient(productDatabaseSetting.Value.ConnectionString);
             var database = mongoClient.GetDatabase(productDatabaseSetting.Value.DatabaseName);
            // _productCollection = database.GetCollection<ProductDetails>(productDatabaseSetting.Value.CollectionName);
             _productCollection = database.GetCollection<ProductDetails>("ProductDetails");
+            _mapper = mapper;
+            _BoxedMapper = BoxedMapper;
         }
 
         public async Task<List<ProductDetails>> ProductListAsync()
@@ -40,8 +47,14 @@ namespace DemoApiMongo.Repository
             return result;
         }
 
-        public async Task AddProductAsync(ProductDetails productDetails)
+        public async Task AddProductAsync(ProductDetailModel model)
         {
+            //BoxMapping
+            ProductDetails productDetails = new ProductDetails();
+            _BoxedMapper.Map(model, productDetails);
+
+            //AutoMapping
+            //var productDetail = _mapper.Map<ProductDetails>(model);
             await _productCollection.InsertOneAsync(productDetails);
         }
 

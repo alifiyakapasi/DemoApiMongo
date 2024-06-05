@@ -1,4 +1,4 @@
-﻿using DemoApiMongo.Entities;
+﻿using DemoApiMongo.Entities.ViewModels;
 using DemoApiMongo.Repository;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;

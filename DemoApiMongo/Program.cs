@@ -1,4 +1,8 @@
+using Boxed.Mapping;
 using DemoApiMongo.Configuration;
+using DemoApiMongo.Entities.DataModels;
+using DemoApiMongo.Entities.Mappers;
+using DemoApiMongo.Entities.ViewModels;
 using DemoApiMongo.Filter;
 using DemoApiMongo.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -53,6 +57,13 @@ builder.Services.AddControllers(options => options.Filters.Add(typeof(ExceptionL
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+//AutoMapping
+builder.Services.AddAutoMapper(typeof(AutoMapping));
+
+//BoxedMapping
+builder.Services.AddTransient<IMapper<ProductDetailModel, ProductDetails>, BoxedMapping>();
+
 
 // jwt settings
 builder.Services.AddSwaggerGen(options => {

@@ -1,5 +1,4 @@
 ﻿using DemoApiMongo.Filter;
-using DemoApiMongo.Entities;
 using DemoApiMongo.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -7,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Globalization;
 using System.Collections;
+using DemoApiMongo.Entities.DataModels;
+using DemoApiMongo.Entities.ViewModels;
 
 namespace DemoApiMongo.Controllers
 {
@@ -55,8 +56,8 @@ namespace DemoApiMongo.Controllers
 
 
             //InvalidCastException - cast operation was not successful because the data types are incompatible.
-            object obj = new object();
-            int i = (int)obj;
+            //object obj = new object();
+            //int i = (int)obj;
 
 
             //KeyNotFoundException is thrown when a key you are finding is not available in the Dictionary collection.
@@ -105,11 +106,11 @@ namespace DemoApiMongo.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(ProductDetails productDetails)
+        public async Task<IActionResult> Post(ProductDetailModel model)
         {
-            await productService.AddProductAsync(productDetails);
+            await productService.AddProductAsync(model);
             logger.LogInformation("Data Added");
-            return CreatedAtAction(nameof(Get), new { id = productDetails.Id }, productDetails);
+            return CreatedAtAction(nameof(Get), new { id = model.Id }, model);
         }
 
         [HttpPut("{productId:length(24)}")]

@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace DemoApiMongo.Entities
+namespace DemoApiMongo.Entities.DataModels
 {
     public class ProductDetails
     {

@@ -1,4 +1,5 @@
-﻿using DemoApiMongo.Entities;
+﻿using DemoApiMongo.Entities.DataModels;
+using DemoApiMongo.Entities.ViewModels;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace DemoApiMongo.Repository
 
         public Task<List<ProductDetails>> GetProductDetailsByNameAsync(string name);
 
-        public Task AddProductAsync(ProductDetails productDetails);
+        public Task AddProductAsync(ProductDetailModel productDetails);
 
         public Task UpdateProductAsync(string productId, ProductDetails productDetails);
 

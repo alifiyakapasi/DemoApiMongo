@@ -1,4 +1,5 @@
-﻿using DemoApiMongo.Entities;
+﻿using DemoApiMongo.Entities.DataModels;
+using DemoApiMongo.Entities.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
