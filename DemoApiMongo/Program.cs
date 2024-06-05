@@ -65,6 +65,8 @@ builder.Services.AddAutoMapper(typeof(AutoMapping));
 //BoxedMapping
 builder.Services.AddTransient<IMapper<ProductDetailModel, ProductDetails>, BoxedMapping>();
 
+//Cached Memory
+builder.Services.AddMemoryCache();
 
 // jwt settings
 builder.Services.AddSwaggerGen(options => {

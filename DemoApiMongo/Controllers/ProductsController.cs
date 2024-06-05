@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Collections;
 using DemoApiMongo.Entities.DataModels;
 using DemoApiMongo.Entities.ViewModels;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace DemoApiMongo.Controllers
 {
@@ -21,46 +22,51 @@ namespace DemoApiMongo.Controllers
 
         private readonly IProductRepo productService;
         private readonly ILogger<ProductsController> logger;
+        private readonly IMemoryCache _memoryCache;
+        public string cacheKey = "product";
 
-        public ProductsController(IProductRepo productRepo, ILogger<ProductsController> logger)
+        public ProductsController(IProductRepo productRepo, ILogger<ProductsController> logger, IMemoryCache memoryCache)
         {
             this.productService = productRepo;
             this.logger = logger;
+            this._memoryCache = memoryCache;
         }
 
 
         [HttpGet]
         public async Task<List<ProductDetails>> Get()
         {
-            // DivideByZeroException: Attempted to divide by zero
+            /// Below All are Exception Methods
+
+            /// DivideByZeroException: Attempted to divide by zero
             //var x = 1 / Convert.ToInt32("0", CultureInfo.InvariantCulture); 
 
-            // Throws NullReferenceException
+            /// Throws NullReferenceException
             //string myString = null;
             //string result = myString.ToUpper(); 
 
-            // ArgumentOutOfRangeException - max length of array is 1, but we try to print index 2 so exception occurs. 
+            /// ArgumentOutOfRangeException - max length of array is 1, but we try to print index 2 so exception occurs. 
             //ArrayList lis = new ArrayList();
             //lis.Add("A");
             //lis.Add("B");
             //Console.WriteLine(lis[2]);
 
-            //  FormatException is thrown when compiled since we have passed a value other than integer
+            /// FormatException is thrown when compiled since we have passed a value other than integer
             //string str = "3.5";
             //int res = int.Parse(str);
 
 
-            //OverflowException is thrown since we have passed a value that is out of integer(Int32) range.
+            ///OverflowException is thrown since we have passed a value that is out of integer(Int32) range.
             //string str = "757657657657657";
             //int res = int.Parse(str);
 
 
-            //InvalidCastException - cast operation was not successful because the data types are incompatible.
+            /// InvalidCastException - cast operation was not successful because the data types are incompatible.
             //object obj = new object();
             //int i = (int)obj;
 
 
-            //KeyNotFoundException is thrown when a key you are finding is not available in the Dictionary collection.
+            /// KeyNotFoundException is thrown when a key you are finding is not available in the Dictionary collection.
             //var dict = new Dictionary<string, string>() {
             //{"TV", "Electronics"},
             //{"Laptop", "Computers"},
@@ -69,7 +75,23 @@ namespace DemoApiMongo.Controllers
 
 
             logger.LogInformation("Getting All Data");
-            return await productService.ProductListAsync();
+            
+
+            // Cached Memory 
+            List<ProductDetails> list;
+
+            // Cache Service 
+            if (!_memoryCache.TryGetValue(cacheKey, out list))
+            {
+                list = await productService.ProductListAsync();
+
+                _memoryCache.Set(cacheKey, list,
+                    new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1))); // For 1 Minute data will be stored in cached memory
+            }
+            return list;
+
+            //return await productService.ProductListAsync();
 
         }
 
