@@ -15,6 +15,7 @@ namespace DemoApiMongo.Repository
     public class ProductRepo : IProductRepo
     {
        private readonly IMongoCollection<ProductDetails> _productCollection;
+        private readonly IMongoCollection<ProductCategories> _productC;
         private readonly IMapper _mapper;
         private readonly IMapper<ProductDetailModel, ProductDetails> _BoxedMapper;
 
@@ -24,7 +25,8 @@ namespace DemoApiMongo.Repository
             var mongoClient = new MongoClient(productDatabaseSetting.Value.ConnectionString);
             var database = mongoClient.GetDatabase(productDatabaseSetting.Value.DatabaseName);
            // _productCollection = database.GetCollection<ProductDetails>(productDatabaseSetting.Value.CollectionName);
-            _productCollection = database.GetCollection<ProductDetails>("ProductDetails");
+            _productCollection = database.GetCollection<ProductDetails>("ProductDetails"); 
+            _productC = database.GetCollection<ProductCategories>("ProductCategories");
             _mapper = mapper;
             _BoxedMapper = BoxedMapper;
         }
@@ -77,6 +79,11 @@ namespace DemoApiMongo.Repository
         public async Task DeleteProductAsync(string productId)
         {
             await _productCollection.DeleteOneAsync(x => x.Id == productId);
+        }
+
+        public async Task InsertProductCategoriesAsync(List<ProductCategories> list)
+        {
+            await _productC.InsertManyAsync(list);
         }
     }
 }

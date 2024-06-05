@@ -9,6 +9,7 @@ using System.Collections;
 using DemoApiMongo.Entities.DataModels;
 using DemoApiMongo.Entities.ViewModels;
 using Microsoft.Extensions.Caching.Memory;
+using ExcelDataReader;
 
 namespace DemoApiMongo.Controllers
 {
@@ -182,6 +183,102 @@ namespace DemoApiMongo.Controllers
             return Ok();
         }
 
+
+        [Route("api/ImportProductCategoryExcelAsync")]
+        [HttpPost]
+        public async Task<ActionResult> ImportProductCategoryExcelAsync()
+        {
+            var documentcode = new List<ProductCategories>();
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", "ProductCategory.xlsx");
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    while (reader.Read()) //Each row of the file
+                    {
+                        var strId = (reader.GetValue(0) ?? "").ToString();
+                        var strName = (reader.GetValue(1) ?? "").ToString();
+                        var strType = (reader.GetValue(2) ?? "").ToString();
+                        var strItem = (reader.GetValue(3) ?? "").ToString();
+
+
+                        var strAdditionalTypes = new List<string>();
+                        if (strType != null)
+                        {
+                            strType = strType.Replace(" ", "");
+                            strAdditionalTypes = strType.Split(",").ToList();
+                        }
+
+                        var declarationCategoryItem = new ProductCategories()
+                        {
+                            ProductId = strId,
+                            ProductName = strName,
+                            ProductType = strAdditionalTypes,
+                            TotalItems = strItem,
+                        };
+                        documentcode.Add(declarationCategoryItem);
+                    }
+
+                    if (documentcode != null && documentcode.Count > 1)
+                    {
+                        documentcode.RemoveAt(0);
+                        await productService.InsertProductCategoriesAsync(documentcode);
+                    }
+                }
+            }
+            return Ok();
+        }
+
+       
+        [Route("api/ImportProductCategoryCsvAsync")]
+        [HttpPost]
+        public async Task<ActionResult> ImportProductCategoryCsvAsync()
+        {
+            var documentcode = new List<ProductCategories>();
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", "ProductCategory1.csv");
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                // here difference occurs in xlsx & csv - CreateCsvReader
+                using (var reader = ExcelReaderFactory.CreateCsvReader(stream))
+                {
+                    while (reader.Read()) //Each row of the file
+                    {
+                        var strId = (reader.GetValue(0) ?? "").ToString();
+                        var strName = (reader.GetValue(1) ?? "").ToString();
+                        var strType = (reader.GetValue(2) ?? "").ToString();
+                        var strItem = (reader.GetValue(3) ?? "").ToString();
+
+
+                        var strAdditionalTypes = new List<string>();
+                        if (strType != null)
+                        {
+                            strType = strType.Replace(" ", "");
+                            strAdditionalTypes = strType.Split(",").ToList();
+                        }
+
+                        var declarationCategoryItem = new ProductCategories()
+                        {
+                            ProductId = strId,
+                            ProductName = strName,
+                            ProductType = strAdditionalTypes,
+                            TotalItems = strItem,
+                        };
+                        documentcode.Add(declarationCategoryItem);
+                    }
+
+                    // here difference occurs in xlsx & csv - Count > 0
+                    if (documentcode != null && documentcode.Count > 0)
+                    {
+                        await productService.InsertProductCategoriesAsync(documentcode);
+                    }
+                }
+            }
+            return Ok();
+        }
 
     }
 }

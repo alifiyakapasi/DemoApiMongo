@@ -26,5 +26,7 @@ namespace DemoApiMongo.Repository
 
 
         public Task DeleteProductAsync(String productId);
+
+        public  Task InsertProductCategoriesAsync(List<ProductCategories> list);
     }
 }
