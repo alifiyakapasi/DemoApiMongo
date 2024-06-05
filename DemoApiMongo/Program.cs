@@ -5,6 +5,7 @@ using DemoApiMongo.Entities.Mappers;
 using DemoApiMongo.Entities.ViewModels;
 using DemoApiMongo.Filter;
 using DemoApiMongo.Repository;
+using DemoApiMongo.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -104,7 +105,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
