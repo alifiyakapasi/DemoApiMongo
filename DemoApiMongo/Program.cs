@@ -4,10 +4,9 @@ using DemoApiMongo.Entities.DataModels;
 using DemoApiMongo.Entities.Mappers;
 using DemoApiMongo.Entities.ViewModels;
 using DemoApiMongo.Filter;
-using DemoApiMongo.Repository;
 using DemoApiMongo.Middleware;
+using DemoApiMongo.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -68,6 +67,17 @@ builder.Services.AddTransient<IMapper<ProductDetailModel, ProductDetails>, Boxed
 //Cached Memory
 builder.Services.AddMemoryCache();
 
+// cors to allow access to frontend
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 // jwt settings
 builder.Services.AddSwaggerGen(options => {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -100,6 +110,8 @@ builder.Services.AddSwaggerGen(options => {
 });
 
 var app = builder.Build();
+
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

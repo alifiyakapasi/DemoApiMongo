@@ -35,8 +35,6 @@ namespace DemoApiMongo.Filter
 
             // Log the exception
             _logger.LogError("Unhandled exception occurred while executing request: {ex}", context.Exception);
-
-
             context.Result = result;
         }
     }

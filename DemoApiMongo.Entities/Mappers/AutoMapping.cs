@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using DemoApiMongo.Entities.DataModels;
 using DemoApiMongo.Entities.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DemoApiMongo.Entities.Mappers
 {
@@ -14,8 +9,12 @@ namespace DemoApiMongo.Entities.Mappers
         public AutoMapping()
         {
             CreateMap<ProductDetailModel, ProductDetails>()
-                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Name))
-                 .ReverseMap().ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.ProductName));
+                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductName))
+                 .ReverseMap().ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductName));
+
+            CreateMap<ProductCategoryModel, CategoryList>()
+                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.CategoryName))
+                 .ReverseMap().ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.CategoryName));
         }
 
     }

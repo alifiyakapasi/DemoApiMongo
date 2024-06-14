@@ -1,14 +1,12 @@
-﻿using DemoApiMongo.Configuration;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
-using System.Text.RegularExpressions;
-using MongoDB.Bson;
+﻿using AutoMapper;
+using Boxed.Mapping;
+using DemoApiMongo.Configuration;
+using DemoApiMongo.Entities.DataModels;
+using DemoApiMongo.Entities.ViewModels;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using DemoApiMongo.Entities.DataModels;
-using AutoMapper;
-using DemoApiMongo.Entities.ViewModels;
-using Boxed.Mapping;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace DemoApiMongo.Repository
 {
@@ -16,6 +14,7 @@ namespace DemoApiMongo.Repository
     {
        private readonly IMongoCollection<ProductDetails> _productCollection;
         private readonly IMongoCollection<ProductCategories> _productC;
+        private readonly IMongoCollection<CategoryList> _categoryCollection;
         private readonly IMapper _mapper;
         private readonly IMapper<ProductDetailModel, ProductDetails> _BoxedMapper;
 
@@ -27,6 +26,7 @@ namespace DemoApiMongo.Repository
            // _productCollection = database.GetCollection<ProductDetails>(productDatabaseSetting.Value.CollectionName);
             _productCollection = database.GetCollection<ProductDetails>("ProductDetails"); 
             _productC = database.GetCollection<ProductCategories>("ProductCategories");
+            _categoryCollection = database.GetCollection<CategoryList>("CategoryList");
             _mapper = mapper;
             _BoxedMapper = BoxedMapper;
         }
@@ -84,6 +84,18 @@ namespace DemoApiMongo.Repository
         public async Task InsertProductCategoriesAsync(List<ProductCategories> list)
         {
             await _productC.InsertManyAsync(list);
+        }
+
+
+        public async Task AddCategoryAsync(ProductCategoryModel model)
+        {
+            var category = _mapper.Map<CategoryList>(model);
+            await _categoryCollection.InsertOneAsync(category);
+        }
+
+        public async Task<List<CategoryList>> CategoryListAsync()
+        {
+            return await _categoryCollection.Find(_ => true).ToListAsync();
         }
     }
 }

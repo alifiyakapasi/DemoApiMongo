@@ -1,11 +1,6 @@
 ﻿using DemoApiMongo.Entities.DataModels;
 using DemoApiMongo.Entities.ViewModels;
 using Microsoft.AspNetCore.JsonPatch;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DemoApiMongo.Repository
 {
@@ -21,12 +16,13 @@ namespace DemoApiMongo.Repository
 
         public Task UpdateProductAsync(string productId, ProductDetails productDetails);
 
-        // public Task UpdatePartialProductAsync(string productId, ProductDetails productDetails);
-       public Task<ProductDetails> UpdatePartialProductAsync(string productId, JsonPatchDocument<ProductDetails> patchDocument);
-
-
+        public Task<ProductDetails> UpdatePartialProductAsync(string productId, JsonPatchDocument<ProductDetails> patchDocument);
         public Task DeleteProductAsync(String productId);
 
-        public  Task InsertProductCategoriesAsync(List<ProductCategories> list);
+        public Task InsertProductCategoriesAsync(List<ProductCategories> list);
+
+        public Task AddCategoryAsync(ProductCategoryModel model);
+
+        public Task<List<CategoryList>> CategoryListAsync();
     }
 }

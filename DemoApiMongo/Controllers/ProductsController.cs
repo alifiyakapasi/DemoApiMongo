@@ -1,19 +1,15 @@
-﻿using DemoApiMongo.Filter;
+﻿using DemoApiMongo.Entities.DataModels;
+using DemoApiMongo.Entities.ViewModels;
+using DemoApiMongo.Filter;
 using DemoApiMongo.Repository;
-using Microsoft.AspNetCore.Authorization;
+using ExcelDataReader;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using System.Globalization;
-using System.Collections;
-using DemoApiMongo.Entities.DataModels;
-using DemoApiMongo.Entities.ViewModels;
 using Microsoft.Extensions.Caching.Memory;
-using ExcelDataReader;
 
 namespace DemoApiMongo.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [LogActionFilter]
@@ -32,7 +28,6 @@ namespace DemoApiMongo.Controllers
             this.logger = logger;
             this._memoryCache = memoryCache;
         }
-
 
         [HttpGet]
         public async Task<List<ProductDetails>> Get()
@@ -76,26 +71,25 @@ namespace DemoApiMongo.Controllers
 
 
             logger.LogInformation("Getting All Data");
-            
+
 
             // Cached Memory 
-            List<ProductDetails> list;
+            //List<ProductDetails> list;
 
-            // Cache Service 
-            if (!_memoryCache.TryGetValue(cacheKey, out list))
-            {
-                list = await productService.ProductListAsync();
+            //// Cache Service 
+            //if (!_memoryCache.TryGetValue(cacheKey, out list))
+            //{
+            //    list = await productService.ProductListAsync();
 
-                _memoryCache.Set(cacheKey, list,
-                    new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1))); // For 1 Minute data will be stored in cached memory
-            }
-            return list;
+            //    _memoryCache.Set(cacheKey, list,
+            //        new MemoryCacheEntryOptions()
+            //        .SetAbsoluteExpiration(TimeSpan.FromMinutes(1))); // For 1 Minute data will be stored in cached memory
+            //}
+            //return list;
 
-            //return await productService.ProductListAsync();
+            return await productService.ProductListAsync();
 
         }
-
 
         [HttpGet("{productId:length(24)}")]
         public async Task<ActionResult<ProductDetails>> Get(string productId)
@@ -103,11 +97,6 @@ namespace DemoApiMongo.Controllers
             try
             {
                 var productDetails = await productService.GetProductDetailByIdAsync(productId);
-
-                //if (productDetails is null)
-                //{
-                //    return NotFound();
-                //}
                 logger.LogInformation("Getting Searched Data");
                 return productDetails;
             }
@@ -119,16 +108,20 @@ namespace DemoApiMongo.Controllers
             }
         }
 
-
-        [HttpGet("{name}")]
-        public async Task<IActionResult> SearchProductsByName(string name)
+        [HttpGet("productName")]
+        public async Task<IActionResult> SearchProductsByName([FromQuery(Name = "productName")] string productName)
         {
-            var products = await productService.GetProductDetailsByNameAsync(name);
+            if (productName == null)
+            {
+                var product = await productService.ProductListAsync();
+                return Ok(product);
+            }
+            var products = await productService.GetProductDetailsByNameAsync(productName);
             logger.LogInformation("Getting Searched Data");
             return Ok(products);
         }
 
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<IActionResult> Post(ProductDetailModel model)
         {
             await productService.AddProductAsync(model);
@@ -183,7 +176,7 @@ namespace DemoApiMongo.Controllers
             return Ok();
         }
 
-
+        #region Excel & Csv File
         [Route("api/ImportProductCategoryExcelAsync")]
         [HttpPost]
         public async Task<ActionResult> ImportProductCategoryExcelAsync()
@@ -231,7 +224,7 @@ namespace DemoApiMongo.Controllers
             return Ok();
         }
 
-       
+
         [Route("api/ImportProductCategoryCsvAsync")]
         [HttpPost]
         public async Task<ActionResult> ImportProductCategoryCsvAsync()
@@ -280,5 +273,25 @@ namespace DemoApiMongo.Controllers
             return Ok();
         }
 
+        #endregion
+
+
+        #region Category
+        [HttpPost("addCategory")]
+        public async Task<IActionResult> AddCategory(ProductCategoryModel category)
+        {
+            await productService.AddCategoryAsync(category);
+            logger.LogInformation("Data Added");
+            return CreatedAtAction(nameof(Get), new { id = category.Id }, category);
+        }
+
+        [HttpGet("getcategory")]
+        public async Task<List<CategoryList>> GetCategory()
+        {
+            logger.LogInformation("Getting All Data");
+            return await productService.CategoryListAsync();
+        }
+
+        #endregion
     }
 }

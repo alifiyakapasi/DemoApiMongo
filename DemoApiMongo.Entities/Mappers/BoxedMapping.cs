@@ -1,11 +1,6 @@
 ﻿using Boxed.Mapping;
 using DemoApiMongo.Entities.DataModels;
 using DemoApiMongo.Entities.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DemoApiMongo.Entities.Mappers
 {
@@ -14,10 +9,17 @@ namespace DemoApiMongo.Entities.Mappers
         public void Map(ProductDetailModel source, ProductDetails destination)
         {
             destination.Id = source.Id;
-            destination.ProductName = source.Name;
+            destination.ProductName = source.ProductName;
             destination.ProductDescription = source.ProductDescription;
             destination.ProductPrice = source.ProductPrice;
             destination.ProductQuantity = source.ProductQuantity;
+            destination.CategoryId = source.CategoryId;
+            destination.ProductStatus = source.ProductStatus;
+            destination.SelectedCategory = source.SelectedCategory;
+            destination.FileUpload = source.FileUpload;
+            destination.FromDate = source.FromDate;
+            destination.ToDate = source.ToDate;
+            destination.Time = source.Time;
         }
     }
 }

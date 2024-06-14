@@ -1,6 +1,5 @@
 ﻿using DemoApiMongo.Entities.ViewModels;
 using DemoApiMongo.Repository;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DemoApiMongo.Controllers
